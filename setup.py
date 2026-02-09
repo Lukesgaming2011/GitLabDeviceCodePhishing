@@ -30,9 +30,7 @@ setup(
     description="GitLab Device Code Phishing Framework for authorized security testing",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="Security Research Team",
-    author_email="security@example.com",
-    url="https://github.com/yourusername/gitlab-phishing-framework",
+    url="https://github.com/Maldev-Academy/GitLabDeviceCodePhishing/",
     license="MIT",
     
     # Package configuration
