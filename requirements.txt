@@ -1,0 +1,25 @@
+# GitLab Device Code Phishing Framework - Python Dependencies
+# Pin versions for reproducibility
+
+# Web Framework
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# HTTP Client
+requests==2.31.0
+
+# Database (built-in with Python, no package needed)
+# sqlite3 is part of Python standard library
+
+# SSH Key Generation (uses system ssh-keygen, no Python package needed)
+# cryptography not required - using subprocess with ssh-keygen
+
+# Standard library dependencies (no installation needed):
+# - logging
+# - threading
+# - json
+# - pathlib
+# - datetime
+# - subprocess
+# - signal
+# - argparse

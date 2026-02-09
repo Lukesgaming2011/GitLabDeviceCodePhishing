@@ -1,0 +1,16 @@
+{
+    "admin_port": 3000,
+    "phishing_port": 8080,
+    "host": "0.0.0.0",
+    "db_path": "data/gitlab_phishing.db",
+    "log_level": "INFO",
+    "log_dir": "logs/",
+    "results_dir": "results/",
+    "ssh_keys_dir": "results/ssh_keys/",
+    "polling_timeout": 900,
+    "api_timeout": 30,
+    "max_retries": 3,
+    "retry_delay": 5,
+    "default_gitlab_url": "https://gitlab.com",
+    "verify_ssl": true
+}

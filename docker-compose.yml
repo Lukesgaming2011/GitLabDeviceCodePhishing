@@ -1,0 +1,92 @@
+# GitLab Device Code Phishing Framework - Docker Compose Configuration
+#
+# This docker-compose file provides easy deployment of the framework with
+# proper volume mounts for data persistence and configurable environment variables.
+
+services:
+  gitlab-phishing-framework:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    
+    container_name: gitlab-phishing-framework
+    
+    # Port mappings
+    # 3000: Admin Panel - Access at http://localhost:3000/admin
+    # 8080: Phishing Server - Phishing pages served at http://localhost:8080
+    ports:
+      - "${ADMIN_PORT:-3000}:3000"
+      - "${PHISHING_PORT:-8080}:8080"
+    
+    # Volume mounts for data persistence
+    volumes:
+      # Database persistence
+      - ./data:/app/data
+      
+      # Logs persistence
+      - ./logs:/app/logs
+      
+      # Results and captured data persistence
+      - ./results:/app/results
+      
+      # Optional: Mount custom configuration
+      # Uncomment to use a custom config file
+      # - ./config/custom.json:/app/config/default.json:ro
+    
+    # Environment variables for configuration overrides
+    environment:
+      # Logging configuration
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      
+      # Server configuration
+      - ADMIN_PORT=${ADMIN_PORT:-3000}
+      - PHISHING_PORT=${PHISHING_PORT:-8080}
+      - HOST=${HOST:-0.0.0.0}
+      
+      # Database configuration
+      - DB_PATH=${DB_PATH:-data/gitlab_phishing.db}
+      
+      # Timeouts and retry settings
+      - POLLING_TIMEOUT=${POLLING_TIMEOUT:-900}
+      - API_TIMEOUT=${API_TIMEOUT:-30}
+      - MAX_RETRIES=${MAX_RETRIES:-3}
+      - RETRY_DELAY=${RETRY_DELAY:-5}
+      
+      # Default GitLab URL
+      - DEFAULT_GITLAB_URL=${DEFAULT_GITLAB_URL:-https://gitlab.com}
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Resource limits (optional, adjust based on your needs)
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    
+    # Network configuration
+    networks:
+      - phishing-network
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:3000/api/stats', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  phishing-network:
+    driver: bridge
+
+# Optional: Define named volumes for better management
+# Uncomment if you prefer named volumes over bind mounts
+# volumes:
+#   gitlab-phishing-data:
+#   gitlab-phishing-logs:
+#   gitlab-phishing-results:

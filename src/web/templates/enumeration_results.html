@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enumeration Results - Victim {{ victim.id }}</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/admin.css">
+    <style>
+        /* Page Header */
+        .page-header {
+            margin-bottom: 30px;
+        }
+        
+        .page-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .page-header p {
+            color: var(--text-secondary);
+        }
+        
+        /* Tab Navigation */
+        .tabs-container {
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .tabs-nav {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 2px solid var(--border-color);
+            background: var(--dark-bg);
+        }
+        
+        .tab-button {
+            padding: 15px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tab-button:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+        
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: var(--card-bg);
+        }
+        
+        .tab-badge {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .tab-button.active .tab-badge {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: var(--card-bg);
+            animation: fadeIn 0.3s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .tab-content h2 {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .summary-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+        
+        .summary-card-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .summary-card-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .summary-card-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        /* Project Details */
+        .project-details {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .project-description {
+            color: var(--text-primary);
+            margin-top: 10px;
+        }
+        
+        .project-url {
+            margin-top: 8px;
+        }
+        
+        .project-url a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .project-url a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Details/Summary */
+        details {
+            margin-top: 15px;
+        }
+        
+        details summary {
+            cursor: pointer;
+            padding: 10px;
+            background: var(--hover-bg);
+            border-radius: 4px;
+            color: var(--text-primary);
+            user-select: none;
+            border: 1px solid var(--border-color);
+        }
+        
+        details summary:hover {
+            background: var(--card-bg);
+        }
+        
+        details[open] summary {
+            margin-bottom: 10px;
+        }
+        
+        /* Section Dividers */
+        .section-divider {
+            margin: 30px 0;
+            border: none;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hidden data for JavaScript -->
+    <div id="page-data" 
+         data-victim-id="{{ victim.id }}" 
+         data-access-token="{{ token.access_token if token else '' }}"
+         data-refresh-token="{{ token.refresh_token if token and token.refresh_token else '' }}"
+         style="display: none;"></div>
+
+    <div class="container">
+        <div style="margin: 20px 0;">
+            <a href="/admin" class="btn btn-secondary">← Back to Admin Panel</a>
+        </div>
+
+        <div class="page-header">
+            <h1>📊 Enumeration Results</h1>
+            <p>Victim ID: {{ victim.id }} | {{ victim.username or 'Unknown User' }} | <span class="status-badge status-{{ victim.status }}">{{ victim.status }}</span></p>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid">
+            {% if projects %}
+            <div class="summary-card">
+                <div class="summary-card-icon">📁</div>
+                <div class="summary-card-value">{{ projects|length }}</div>
+                <div class="summary-card-label">Projects</div>
+            </div>
+            {% endif %}
+            {% if groups %}
+            <div class="summary-card">
+                <div class="summary-card-icon">👥</div>
+                <div class="summary-card-value">{{ groups|length }}</div>
+                <div class="summary-card-label">Groups</div>
+            </div>
+            {% endif %}
+            {% if ci_variables %}
+            <div class="summary-card">
+                <div class="summary-card-icon">🔐</div>
+                <div class="summary-card-value">{{ ci_variables|length }}</div>
+                <div class="summary-card-label">CI/CD Variables</div>
+            </div>
+            {% endif %}
+            {% if issues %}
+            <div class="summary-card">
+                <div class="summary-card-icon">🐛</div>
+                <div class="summary-card-value">{{ issues|length }}</div>
+                <div class="summary-card-label">Issues</div>
+            </div>
+            {% endif %}
+            {% if merge_requests %}
+            <div class="summary-card">
+                <div class="summary-card-icon">🔀</div>
+                <div class="summary-card-value">{{ merge_requests|length }}</div>
+                <div class="summary-card-label">Merge Requests</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-button active" onclick="switchTab('overview')">
+                    ⚡ Overview
+                </button>
+                {% if token %}
+                <button class="tab-button" onclick="switchTab('tokens')">
+                    🔑 Tokens
+                </button>
+                {% endif %}
+                {% if projects %}
+                <button class="tab-button" onclick="switchTab('projects')">
+                    📁 Projects <span class="tab-badge">{{ projects|length }}</span>
+                </button>
+                {% endif %}
+                {% if groups %}
+                <button class="tab-button" onclick="switchTab('groups')">
+                    👥 Groups <span class="tab-badge">{{ groups|length }}</span>
+                </button>
+                {% endif %}
+                {% if ci_variables %}
+                <button class="tab-button" onclick="switchTab('variables')">
+                    🔐 CI/CD <span class="tab-badge">{{ ci_variables|length }}</span>
+                </button>
+                {% endif %}
+                {% if issues %}
+                <button class="tab-button" onclick="switchTab('issues')">
+                    🐛 Issues <span class="tab-badge">{{ issues|length }}</span>
+                </button>
+                {% endif %}
+                {% if merge_requests %}
+                <button class="tab-button" onclick="switchTab('mrs')">
+                    🔀 MRs <span class="tab-badge">{{ merge_requests|length }}</span>
+                </button>
+                {% endif %}
+                {% if snippets or deploy_keys or webhooks or protected_branches or runners or container_registries or packages %}
+                <button class="tab-button" onclick="switchTab('other')">
+                    📦 Other Resources
+                </button>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Overview -->
+            <div id="tab-overview" class="tab-content active">
+                <h2>👤 User Information</h2>
+                <div class="results-grid">
+                    <div class="result-item"><span class="label">Username:</span><span class="value">{{ victim.username or 'N/A' }}</span></div>
+                    <div class="result-item"><span class="label">Email:</span><span class="value">{{ victim.email or 'N/A' }}</span></div>
+                    <div class="result-item"><span class="label">User ID:</span><span class="value">{{ victim.user_id or 'N/A' }}</span></div>
+                    <div class="result-item"><span class="label">IP Address:</span><span class="value">{{ victim.ip_address or 'N/A' }}</span></div>
+                </div>
+
+                {% if token %}
+                <h2>⚡ Quick Actions</h2>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                    <button class="btn btn-primary" onclick="copyToken()">🔑 Copy Access Token</button>
+                    <button class="btn btn-secondary" onclick="generateCloneScript()">📜 Generate Clone Script</button>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Tab: Tokens -->
+            {% if token %}
+            <div id="tab-tokens" class="tab-content">
+                <h2>🔑 Access Token</h2>
+            <div class="token-box">
+                <div class="token-header">Access Token</div>
+                <div class="token-value">{{ token.access_token }}</div>
+                <button class="btn btn-small" onclick="copyToken()">Copy</button>
+            </div>
+            {% if token.refresh_token %}
+            <div class="token-box" style="margin-top: 15px;">
+                <div class="token-header">Refresh Token</div>
+                <div class="token-value">{{ token.refresh_token }}</div>
+                <button class="btn btn-small" onclick="copyRefreshToken()">Copy</button>
+            </div>
+            {% endif %}
+            <div class="token-meta">Scope: {{ token.scope or 'N/A' }} | Captured: {{ token.captured_at }}{% if token.expires_in %} | Expires in: {{ token.expires_in }}s{% endif %}</div>
+            </div>
+            {% endif %}
+
+            <!-- Tab: Projects -->
+            {% if projects %}
+            <div id="tab-projects" class="tab-content">
+                <h2>📁 Enumerated Projects ({{ projects|length }})</h2>
+            <div class="projects-list">
+                {% for project in projects %}
+                <div class="project-item">
+                    <div class="project-name">{{ project.name }}</div>
+                    <div class="project-details">ID: {{ project.project_id }} | Visibility: {{ project.visibility or 'N/A' }}</div>
+                    {% if project.description %}<div class="project-description">{{ project.description }}</div>{% endif %}
+                    {% if project.web_url %}<div class="project-url"><a href="{{ project.web_url }}" target="_blank">{{ project.web_url }}</a></div>{% endif %}
+                    
+                    <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                        {% if project.http_url_to_repo %}
+                        <button class="btn btn-small btn-secondary" onclick="copyCloneCmd('{{ project.http_url_to_repo }}')">📋 Clone Command</button>
+                        {% endif %}
+                        <button class="btn btn-small btn-primary" onclick="enumerateProjectDeeper({{ project.project_id }}, '{{ project.name }}')">🔍 Enumerate Deeper</button>
+                    </div>
+                    
+                    <details>
+                        <summary>📄 View Project JSON</summary>
+                        <pre class="json-view">{{ project | tojson(indent=2) }}</pre>
+                    </details>
+                    
+                    <div id="deeper-{{ project.project_id }}" style="display: none; margin-top: 15px; padding: 15px; background: var(--dark-bg); border-left: 3px solid var(--primary-color); border-radius: 4px;">
+                        <h4 style="color: var(--text-primary);">🔍 Deep Enumeration Results</h4>
+                        <div id="deeper-content-{{ project.project_id }}"><p style="color: var(--text-secondary);">Loading...</p></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Projects JSON</summary>
+                <pre class="json-view">{{ projects | tojson(indent=2) }}</pre>
+            </details>
+            </div>
+            {% endif %}
+
+            <!-- Tab: Groups -->
+            {% if groups %}
+            <div id="tab-groups" class="tab-content">
+                <h2>👥 Groups ({{ groups|length }})</h2>
+            <div class="projects-list">
+                {% for group in groups %}
+                <div class="project-item">
+                    <div class="project-name">{{ group.name }}</div>
+                    <div class="project-details">ID: {{ group.group_id }} | Path: {{ group.path or 'N/A' }} | Visibility: {{ group.visibility or 'N/A' }}</div>
+                    {% if group.description %}<div class="project-description">{{ group.description }}</div>{% endif %}
+                    {% if group.web_url %}<div class="project-url"><a href="{{ group.web_url }}" target="_blank">{{ group.web_url }}</a></div>{% endif %}
+                    
+                    <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-small btn-primary" onclick="enumerateGroupMembers({{ group.id }}, '{{ group.name }}')">👥 View Members</button>
+                    </div>
+                    
+                    <div id="group-members-{{ group.id }}" style="display: none; margin-top: 15px; padding: 15px; background: var(--dark-bg); border-left: 3px solid var(--primary-color); border-radius: 4px;">
+                        <h4 style="color: var(--text-primary);">👥 Group Members</h4>
+                        <div id="group-members-content-{{ group.id }}"><p style="color: var(--text-secondary);">Loading...</p></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Groups JSON</summary>
+                <pre class="json-view">{{ groups | tojson(indent=2) }}</pre>
+            </details>
+            </div>
+            {% endif %}
+
+            <!-- Tab: CI/CD Variables -->
+            {% if ci_variables %}
+            <div id="tab-variables" class="tab-content">
+                <h2>🔐 CI/CD Variables ({{ ci_variables|length }})</h2>
+            <div class="projects-list">
+                {% for var in ci_variables %}
+                <div class="project-item">
+                    <div class="project-name">{{ var.key }}</div>
+                    <div class="project-details">Project: {{ var.project_name }} | Value: {{ var.value or '[MASKED]' }} | Protected: {{ 'Yes' if var.protected else 'No' }} | Masked: {{ 'Yes' if var.masked else 'No' }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Variables JSON</summary>
+                <pre class="json-view">{{ ci_variables | tojson(indent=2) }}</pre>
+            </details>
+            </div>
+            {% endif %}
+
+            <!-- Tab: Issues -->
+            {% if issues %}
+            <div id="tab-issues" class="tab-content">
+                <h2>🐛 Issues ({{ issues|length }})</h2>
+                <div class="projects-list">
+                    {% for issue in issues %}
+                    <div class="project-item">
+                        <div class="project-name">{{ issue.title }}</div>
+                        <div class="project-details">Project: {{ issue.project_name }} | State: {{ issue.state }} | #{{ issue.iid }}</div>
+                        {% if issue.web_url %}<div class="project-url"><a href="{{ issue.web_url }}" target="_blank">{{ issue.web_url }}</a></div>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <details>
+                    <summary>📄 View All Issues JSON</summary>
+                    <pre class="json-view">{{ issues | tojson(indent=2) }}</pre>
+                </details>
+            </div>
+            {% endif %}
+
+            <!-- Tab: Merge Requests -->
+            {% if merge_requests %}
+            <div id="tab-mrs" class="tab-content">
+                <h2>🔀 Merge Requests ({{ merge_requests|length }})</h2>
+                <div class="projects-list">
+                    {% for mr in merge_requests %}
+                    <div class="project-item">
+                        <div class="project-name">{{ mr.title }}</div>
+                        <div class="project-details">Project: {{ mr.project_name }} | State: {{ mr.state }} | !{{ mr.iid }}</div>
+                        {% if mr.web_url %}<div class="project-url"><a href="{{ mr.web_url }}" target="_blank">{{ mr.web_url }}</a></div>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <details>
+                    <summary>📄 View All Merge Requests JSON</summary>
+                    <pre class="json-view">{{ merge_requests | tojson(indent=2) }}</pre>
+                </details>
+            </div>
+            {% endif %}
+
+            <!-- Tab: Other Resources -->
+            {% if snippets or deploy_keys or webhooks or protected_branches or runners or container_registries or packages %}
+            <div id="tab-other" class="tab-content">
+                
+                <!-- Snippets -->
+                {% if snippets %}
+                <h2>📝 Snippets ({{ snippets|length }})</h2>
+            <div class="projects-list">
+                {% for snippet in snippets %}
+                <div class="project-item">
+                    <div class="project-name">{{ snippet.title }}</div>
+                    <div class="project-details">File: {{ snippet.file_name or 'N/A' }} | Visibility: {{ snippet.visibility or 'N/A' }}</div>
+                    {% if snippet.web_url %}<div class="project-url"><a href="{{ snippet.web_url }}" target="_blank">{{ snippet.web_url }}</a></div>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Snippets JSON</summary>
+                <pre class="json-view">{{ snippets | tojson(indent=2) }}</pre>
+            </details>
+                <hr class="section-divider">
+                {% endif %}
+
+                <!-- Deploy Keys -->
+                {% if deploy_keys %}
+                <h2>🔑 Deploy Keys ({{ deploy_keys|length }})</h2>
+            <div class="projects-list">
+                {% for key in deploy_keys %}
+                <div class="project-item">
+                    <div class="project-name">{{ key.title }}</div>
+                    <div class="project-details">Project: {{ key.project_name }} | Can Push: {{ 'Yes' if key.can_push else 'No' }}</div>
+                    {% if key.key %}
+                    <div class="token-box">
+                        <div class="token-header">Public Key</div>
+                        <div class="token-value">{{ key.key[:100] }}...</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Deploy Keys JSON</summary>
+                <pre class="json-view">{{ deploy_keys | tojson(indent=2) }}</pre>
+            </details>
+                <hr class="section-divider">
+                {% endif %}
+
+                <!-- Webhooks -->
+                {% if webhooks %}
+                <h2>🪝 Webhooks ({{ webhooks|length }})</h2>
+            <div class="projects-list">
+                {% for hook in webhooks %}
+                <div class="project-item">
+                    <div class="project-name">{{ hook.url }}</div>
+                    <div class="project-details">Project: {{ hook.project_name }} | Push: {{ 'Yes' if hook.push_events else 'No' }} | MR: {{ 'Yes' if hook.merge_requests_events else 'No' }} | Issues: {{ 'Yes' if hook.issues_events else 'No' }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Webhooks JSON</summary>
+                <pre class="json-view">{{ webhooks | tojson(indent=2) }}</pre>
+            </details>
+                <hr class="section-divider">
+                {% endif %}
+
+                <!-- Protected Branches -->
+                {% if protected_branches %}
+                <h2>🛡️ Protected Branches ({{ protected_branches|length }})</h2>
+            <div class="projects-list">
+                {% for branch in protected_branches %}
+                <div class="project-item">
+                    <div class="project-name">{{ branch.name }}</div>
+                    <div class="project-details">Project: {{ branch.project_name }} | Force Push: {{ 'Allowed' if branch.allow_force_push else 'Blocked' }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Protected Branches JSON</summary>
+                <pre class="json-view">{{ protected_branches | tojson(indent=2) }}</pre>
+            </details>
+                <hr class="section-divider">
+                {% endif %}
+
+                <!-- CI/CD Runners -->
+                {% if runners %}
+                <h2>🏃 CI/CD Runners ({{ runners|length }})</h2>
+            <div class="projects-list">
+                {% for runner in runners %}
+                <div class="project-item">
+                    <div class="project-name">{{ runner.description or 'Runner #' + runner.runner_id|string }}</div>
+                    <div class="project-details">Project: {{ runner.project_name }} | Active: {{ 'Yes' if runner.active else 'No' }} | Shared: {{ 'Yes' if runner.is_shared else 'No' }} | Type: {{ runner.runner_type or 'N/A' }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Runners JSON</summary>
+                <pre class="json-view">{{ runners | tojson(indent=2) }}</pre>
+            </details>
+                <hr class="section-divider">
+                {% endif %}
+
+                <!-- Container Registries -->
+                {% if container_registries %}
+                <h2>📦 Container Registries ({{ container_registries|length }})</h2>
+            <div class="projects-list">
+                {% for registry in container_registries %}
+                <div class="project-item">
+                    <div class="project-name">{{ registry.name or registry.path }}</div>
+                    <div class="project-details">Project: {{ registry.project_name }} | Location: {{ registry.location or 'N/A' }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Registries JSON</summary>
+                <pre class="json-view">{{ container_registries | tojson(indent=2) }}</pre>
+            </details>
+                <hr class="section-divider">
+                {% endif %}
+
+                <!-- Packages -->
+                {% if packages %}
+                <h2>📦 Packages ({{ packages|length }})</h2>
+            <div class="projects-list">
+                {% for package in packages %}
+                <div class="project-item">
+                    <div class="project-name">{{ package.name }}</div>
+                    <div class="project-details">Project: {{ package.project_name }} | Version: {{ package.version or 'N/A' }} | Type: {{ package.package_type or 'N/A' }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <details>
+                <summary>📄 View All Packages JSON</summary>
+                <pre class="json-view">{{ packages | tojson(indent=2) }}</pre>
+            </details>
+                {% endif %}
+
+
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Tab switching function
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById('tab-' + tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            event.target.closest('.tab-button').classList.add('active');
+        }
+        
+        // Expose projects data for clone script
+        window.ALL_PROJECTS = {{ projects | tojson | safe if projects else '[]' }};
+    </script>
+    <script src="/static/js/enumeration_results.js"></script>
+</body>
+</html>

