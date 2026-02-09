@@ -87,11 +87,4 @@ setup(
         "red-team",
         "security-testing"
     ],
-    
-    # Project URLs
-    project_urls={
-        "Bug Reports": "https://github.com/yourusername/gitlab-phishing-framework/issues",
-        "Source": "https://github.com/yourusername/gitlab-phishing-framework",
-        "Documentation": "https://github.com/yourusername/gitlab-phishing-framework/blob/main/README.md",
-    },
 )
