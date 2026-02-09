@@ -89,6 +89,14 @@ VERIFY_SSL=true
 
 ## Demo
 
+Administrator dashboard - http://localhost:3000/admin
+
+<img width="1818" height="922" alt="img1" src="https://github.com/user-attachments/assets/fa0222b9-adf4-4fd7-974c-6fa44b8ea422" />
+
+Creating a new operation
+
+<img width="1806" height="920" alt="img2" src="https://github.com/user-attachments/assets/04af633b-f5b3-4d84-9496-a49bacd2c679" />
+
 ## Credits
 
 Huge thanks to [@0xh3l1x](https://x.com/cgomezz_23) for developing this tool as part of the Offensive Phishing Operations training update.
